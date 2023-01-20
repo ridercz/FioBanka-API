@@ -1,13 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyName>fiodemo</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="30.0.1" />
+    <ProjectReference Include="..\Altairis.FioBankApi.Client\Altairis.FioBankApi.Client.csproj" />
   </ItemGroup>
 
 </Project>
