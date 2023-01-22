@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Title>FIO Banka API</Title>
+    <Title>Fio banka API</Title>
     <Authors>altair</Authors>
     <Company>Altairis, s. r. o.</Company>
     <Description>REST API client for api of FIO Banka.</Description>
@@ -19,6 +19,7 @@
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Version>1.0.0</Version>
+    <PackageId>Altairis.FioBankApi</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
