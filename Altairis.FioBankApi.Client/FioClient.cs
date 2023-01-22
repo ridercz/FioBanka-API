@@ -3,7 +3,7 @@ using CsvHelper.Configuration;
 
 namespace Altairis.FioBankApi.Client;
 
-public class FioClient {
+public class FioClient : IDisposable {
     private readonly HttpClient httpClient;
 
     // Constructors
@@ -73,6 +73,10 @@ public class FioClient {
     /// <returns></returns>
     public Task SetCursor(DateOnly lastFailedDate)
         => this.GetHttpStream($"https://www.fio.cz/ib_api/rest/set-last-date/{this.Token}/{lastFailedDate:yyyy-MM-dd}/");
+    
+    // IDisposable implementation
+    
+    public void Dispose() => ((IDisposable)this.httpClient).Dispose();
 
     // Helper methods
 
