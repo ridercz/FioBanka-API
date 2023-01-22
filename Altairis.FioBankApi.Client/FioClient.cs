@@ -91,15 +91,25 @@ public class FioClient {
 
         // Get stream from API
         var csvStream = await this.GetHttpStream(url);
-        var csvTextReader = new StreamReader(csvStream, System.Text.Encoding.UTF8);
+        var csvTextReader = new StreamReader(csvStream, encoding: System.Text.Encoding.UTF8, leaveOpen: true);
 
         // Read header
+        var numberOfHeaderRows = 0;
         while (true) {
             var line = await csvTextReader.ReadLineAsync();
+            numberOfHeaderRows++;
 
             // Read until empty line
             if (string.IsNullOrEmpty(line)) break;
-            var data = line.Split(';', 2);
+            var data = line.Split(';');
+            if (data.Length < 2) {
+                // Too few columns; this is unexpected but not fatal, just ignore it.
+                continue;
+            } else if (data.Length > 2) {
+                // Too many columns for a header; most likely first row of CSV, containing the column names. See HACK comment below.
+                numberOfHeaderRows--;
+                break;
+            }
 
             // Parse key:value pair
             switch (data[0]) {
@@ -124,6 +134,9 @@ public class FioClient {
                 case "idTo":
                     result.IdTo = data[1];
                     break;
+                case "idLastDownload":
+                    result.IdLastDownload = data[1];
+                    break;
                 case "openingBalance":
                     result.OpeningBalance = decimal.Parse(data[1], czechCulture);
                     break;
@@ -141,10 +154,23 @@ public class FioClient {
             }
         }
 
+        // Reset the reader
+        // HACK: The weird thing with counting the header rows and then reopening the reader and ignoring them is that
+        //       due to a bug in FIO Bank API, which does not insert the empty line after headers when calling the
+        //       `/ib_api/rest/last/` endpoint.
+        csvTextReader.Close();
+        csvStream.Seek(0, SeekOrigin.Begin);
+        csvTextReader = new StreamReader(csvStream, encoding: System.Text.Encoding.UTF8, leaveOpen: false);
+
+        // Skip header rows
+        for (int i = 0; i < numberOfHeaderRows; i++) {
+            await csvTextReader.ReadLineAsync();
+        }
+
         // Read transactions using CsvHelper
         var cfg = new CsvConfiguration(czechCulture) {
             HasHeaderRecord = true,
-            Delimiter = ";"
+            Delimiter = ";",
         };
         var csv = new CsvReader(csvTextReader, cfg);
         csv.Context.RegisterClassMap<TransactionInfoMap>();
