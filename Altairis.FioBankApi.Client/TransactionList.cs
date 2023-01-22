@@ -3,7 +3,7 @@
 public class TransactionList {
 
     /// <summary>
-    /// Gets or sets the account number.
+    /// Gets the account number.
     /// </summary>
     /// <value>
     /// The account number.
@@ -11,7 +11,7 @@ public class TransactionList {
     public string AccountId { get; internal set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the bank code.
+    /// Gets the bank code.
     /// </summary>
     /// <value>
     /// The bank code.
@@ -19,7 +19,7 @@ public class TransactionList {
     public string BankId { get; internal set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the currency code (ie. CZK).
+    /// Gets the currency code (ie. CZK).
     /// </summary>
     /// <value>
     /// The currency code.
@@ -27,7 +27,7 @@ public class TransactionList {
     public string Currency { get; internal set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the IBAN.
+    /// Gets the IBAN.
     /// </summary>
     /// <value>
     /// The IBAN.
@@ -35,7 +35,7 @@ public class TransactionList {
     public string Iban { get; internal set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the BIC.
+    /// Gets the BIC.
     /// </summary>
     /// <value>
     /// The BIC.
@@ -43,7 +43,7 @@ public class TransactionList {
     public string Bic { get; internal set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the first transaction identifier in this list.
+    /// Gets the first transaction identifier in this list.
     /// </summary>
     /// <value>
     /// The first transaction identifier.
@@ -51,7 +51,7 @@ public class TransactionList {
     public string IdFrom { get; internal set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the last transaction identifier in this list.
+    /// Gets the last transaction identifier in this list.
     /// </summary>
     /// <value>
     /// The last transaction identifier.
@@ -59,7 +59,7 @@ public class TransactionList {
     public string IdTo { get; internal set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the account balance at beginning of this list.
+    /// Gets the account balance at beginning of this list.
     /// </summary>
     /// <value>
     /// The opening balance.
@@ -67,7 +67,7 @@ public class TransactionList {
     public decimal OpeningBalance { get; internal set; }
 
     /// <summary>
-    /// Gets or sets the account balance at end of this list.
+    /// Gets the account balance at end of this list.
     /// </summary>
     /// <value>
     /// The closing balance.
@@ -75,7 +75,7 @@ public class TransactionList {
     public decimal ClosingBalance { get; internal set; }
 
     /// <summary>
-    /// Gets or sets the starting date for this list.
+    /// Gets the starting date for this list.
     /// </summary>
     /// <value>
     /// The starting date.
@@ -83,7 +83,7 @@ public class TransactionList {
     public DateOnly DateStart { get; internal set; }
 
     /// <summary>
-    /// Gets or sets the ending date for this list.
+    /// Gets the ending date for this list.
     /// </summary>
     /// <value>
     /// The ending date.
@@ -91,10 +91,18 @@ public class TransactionList {
     public DateOnly DateEnd { get; internal set; }
 
     /// <summary>
-    /// Gets or sets the transactions.
+    /// Gets the ID of last downloaded transaction ID.
     /// </summary>
     /// <value>
-    /// The transactions.
+    /// The ID of last downloaded transaction ID.
+    /// </value>
+    public string? IdLastDownload { get; internal set; }
+
+    /// <summary>
+    /// Gets the list of transactions.
+    /// </summary>
+    /// <value>
+    /// The list of transactions.
     /// </value>
     public ICollection<TransactionInfo> Items { get; internal set; } = new List<TransactionInfo>();
 
