@@ -1,5 +1,4 @@
-﻿using CsvHelper;
-using CsvHelper.Configuration;
+﻿using System.Text;
 
 namespace Altairis.FioBankApi.Client;
 
@@ -73,9 +72,9 @@ public class FioClient : IDisposable {
     /// <returns></returns>
     public Task SetCursor(DateOnly lastFailedDate)
         => this.GetHttpStream($"https://www.fio.cz/ib_api/rest/set-last-date/{this.Token}/{lastFailedDate:yyyy-MM-dd}/");
-    
+
     // IDisposable implementation
-    
+
     public void Dispose() => ((IDisposable)this.httpClient).Dispose();
 
     // Helper methods
@@ -171,16 +170,58 @@ public class FioClient : IDisposable {
             await csvTextReader.ReadLineAsync();
         }
 
-        // Read transactions using CsvHelper
-        var cfg = new CsvConfiguration(czechCulture) {
-            HasHeaderRecord = true,
-            Delimiter = ";",
-        };
-        var csv = new CsvReader(csvTextReader, cfg);
-        csv.Context.RegisterClassMap<TransactionInfoMap>();
-        result.Items = csv.GetRecords<TransactionInfo>().ToList();
+        // Skip CSV header
+        await csvTextReader.ReadLineAsync();
+
+        // Read transactions using custom CSV parser
+        result.Items = new List<TransactionInfo>();
+        while (!csvTextReader.EndOfStream) {
+            var line = await csvTextReader.ReadLineAsync();
+            if (string.IsNullOrEmpty(line)) continue; // Skip empty lines
+
+            var tokens = GetCsvTokens(line).ToArray();
+            if (tokens.Length != 19) throw new Exception($"Invalid number of columns in CSV data. Expected 19, got {tokens.Length}");
+            var transaction = new TransactionInfo {
+                Id = tokens[0],
+                Date = DateOnly.ParseExact(tokens[1], "dd.MM.yyyy"),
+                Amount = decimal.Parse(tokens[2], czechCulture),
+                Currency = tokens[3],
+                OtherAccountNumber = tokens[4],
+                OtherAccountName = tokens[5],
+                OtherAccountBankCode = tokens[6],
+                OtherAccountBankName = tokens[7],
+                KS = tokens[8],
+                VS = tokens[9],
+                SS = tokens[10],
+                UserIdentification = tokens[11],
+                MessageForRecipient = tokens[12],
+                Type = tokens[13],
+                Person = tokens[14],
+                Details = tokens[15],
+                Comments = tokens[16],
+                BIC = tokens[17],
+                OrderId = tokens[18]
+            };
+            result.Items.Add(transaction);
+        }
 
         return result;
+    }
+
+    private static IEnumerable<string> GetCsvTokens(string csvLine) {
+        var inQuote = false;
+        var token = new StringBuilder();
+        foreach (var c in csvLine) {
+            if (c == '"') {
+                inQuote = !inQuote;
+            } else if (c == ';' && !inQuote) {
+                yield return token.ToString().Trim('"');
+                token.Clear();
+            } else {
+                token.Append(c);
+            }
+        }
+        yield return token.ToString();
     }
 
 }
