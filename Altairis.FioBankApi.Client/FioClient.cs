@@ -3,6 +3,7 @@
 namespace Altairis.FioBankApi.Client;
 
 public class FioClient : IDisposable {
+    private const string ApiUrl = "https://fioapi.fio.cz/v1";
     private readonly HttpClient httpClient;
 
     // Constructors
@@ -38,7 +39,7 @@ public class FioClient : IDisposable {
     /// </summary>
     /// <returns></returns>
     public Task<TransactionList> GetTransactions()
-        => this.GetTransactions($"https://www.fio.cz/ib_api/rest/last/{this.Token}/transactions.csv");
+        => this.GetTransactions($"{ApiUrl}/rest/last/{this.Token}/transactions.csv");
 
     /// <summary>
     /// Gets list of transactions from the specified date until today.
@@ -55,7 +56,7 @@ public class FioClient : IDisposable {
     /// <param name="dateEnd">The date range end.</param>
     /// <returns></returns>
     public Task<TransactionList> GetTransactions(DateOnly dateBegin, DateOnly dateEnd)
-        => this.GetTransactions($"https://www.fio.cz/ib_api/rest/periods/{this.Token}/{dateBegin:yyyy-MM-dd}/{dateEnd:yyyy-MM-dd}/transactions.csv");
+        => this.GetTransactions($"{ApiUrl}/rest/periods/{this.Token}/{dateBegin:yyyy-MM-dd}/{dateEnd:yyyy-MM-dd}/transactions.csv");
 
     /// <summary>
     /// Sets the cursor to last known transaction ID.
@@ -63,7 +64,7 @@ public class FioClient : IDisposable {
     /// <param name="lastKnownId">The last known transaction ID.</param>
     /// <returns></returns>
     public Task SetCursor(string lastKnownId)
-        => this.GetHttpStream($"https://www.fio.cz/ib_api/rest/set-last-id/{this.Token}/{lastKnownId}/");
+        => this.GetHttpStream($"{ApiUrl}/rest/set-last-id/{this.Token}/{lastKnownId}/");
 
     /// <summary>
     /// Sets the cursor to last failed date.
@@ -71,7 +72,7 @@ public class FioClient : IDisposable {
     /// <param name="lastFailedDate">The last failed date.</param>
     /// <returns></returns>
     public Task SetCursor(DateOnly lastFailedDate)
-        => this.GetHttpStream($"https://www.fio.cz/ib_api/rest/set-last-date/{this.Token}/{lastFailedDate:yyyy-MM-dd}/");
+        => this.GetHttpStream($"{ApiUrl}/rest/set-last-date/{this.Token}/{lastFailedDate:yyyy-MM-dd}/");
 
     // IDisposable implementation
 
