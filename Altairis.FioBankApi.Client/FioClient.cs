@@ -76,7 +76,10 @@ public class FioClient : IDisposable {
 
     // IDisposable implementation
 
-    public void Dispose() => ((IDisposable)this.httpClient).Dispose();
+    public void Dispose() {
+        ((IDisposable)this.httpClient).Dispose();
+        GC.SuppressFinalize(this);
+    }
 
     // Helper methods
 
